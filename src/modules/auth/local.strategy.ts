@@ -1,21 +1,20 @@
-import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { ExtractJwt, Strategy } from 'passport-jwt';
-import { jwtContants } from './jwt.contants';
-import { UserEntity } from '../user/user.entity';
+import { Strategy } from 'passport-local';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { UserEntity } from '../users/user.entity';
+import { AuthService } from './auth.service';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor() {
-    super({
-      // 获取请求header token值
-      jwtFromRequest: ExtractJwt.fromHeader('token'),
-      secretOrKey: jwtContants.secret,
-    });
+export class LocalStrategy extends PassportStrategy(Strategy) {
+  constructor(private readonly authService: AuthService) {
+    super();
+    this.authService = authService;
   }
 
-  async validate(payload: any): Promise<UserEntity> {
-    //payload：jwt-passport认证jwt通过后解码的结果
-    return { username: payload.username, id: payload.sub };
+  async validate(username: string, password: string): Promise<UserEntity> {
+    console.log('12321312');
+    const user = await this.authService.validate(username, password);
+    if (user) return user;
+    else throw new UnauthorizedException('incorrect username or password');
   }
 }
