@@ -1,39 +1,34 @@
 import { Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
-// import { UserEntity } from '../users/user.entity';
-// import { JwtService } from '@nestjs/jwt';
-import { TokenEntity } from './token.entity';
+import { JwtService } from '@nestjs/jwt';
+import { LoginEntity } from './auth.entity';
 
 @Injectable()
 export class AuthService {
-  private readonly userService: UsersService;
-  // private readonly jwtService: JwtService;
-
+  constructor(private usersService: UsersService, private jwtService: JwtService) {}
   /**
-   * validate user name and password
+   * 校验用户名密码
    * @param username
    * @param password
    */
-  async validate(username: string, password: string): Promise<any> {
-    console.log('username', username, password);
-    const user = await this.userService.find(username);
-    // 注：实际中的密码处理应通过加密措施
+  validate(username: string, password: string): any {
+    const user = this.usersService.findOne(username);
     if (user && user.password === password) {
-      const { password, ...userInfo } = user;
-      return userInfo;
+      return user;
     } else {
       return null;
     }
   }
-
   /**
    * user login
-   * @param user
+   * @param loginParams
    */
-  async login(user: any): Promise<TokenEntity> {
-    const { id, username } = user;
+  login(loginParams): LoginEntity {
+    const { username } = loginParams;
+    const user = this.usersService.findOne(username);
     return {
-      token: '123',
+      access_token: 'Bearer ' + this.jwtService.sign(user),
+      ...user,
     };
   }
 }

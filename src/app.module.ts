@@ -1,15 +1,25 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-
 import { UsersModule } from './modules/users/users.module';
-import { AuthController } from './modules/auth/auth.controller';
 import { AuthModule } from './modules/auth/auth.module';
-import { AuthService } from './modules/auth/auth.service';
+import { ResourcesModule } from './modules/resources/resources.module';
+import { ConfigModule } from '@nestjs/config';
+import { TaskModule } from './modules/task/task.module';
+import customConfig from './config';
 
 @Module({
-  imports: [UsersModule, AuthModule],
-  controllers: [AppController, AuthController],
-  providers: [AppService, AuthService],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true, // 作用于全局
+      load: [customConfig], // 加载自定义配置项
+    }),
+    UsersModule,
+    AuthModule,
+    ResourcesModule,
+    TaskModule,
+  ],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}

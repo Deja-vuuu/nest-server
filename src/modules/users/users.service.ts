@@ -6,15 +6,17 @@ const userFilePath = process.cwd() + '/static/db/users.json';
 export class UsersService {
   /**
    * 通过用户名
-   * @param name
    * @returns {*}
+   * @param username
    */
-  find(name) {
-    const data = readFile(userFilePath);
-    if (data) {
-      return data.find((value) => {
-        return value.userName === name;
-      });
+  findOne(username) {
+    const usersList = readFile(userFilePath);
+    if (usersList) {
+      const user = usersList.find((user) => user.username === username);
+      if (user) return user;
+      else return null;
+    } else {
+      return null;
     }
   }
 }

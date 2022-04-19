@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from './pipe/validation.pipe';
 import { TransformInterceptor } from './core/interceptor/transform.interceptor';
 import { HttpExceptionFilter } from './core/filter/http-exception.filter';
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   // 设置全局路由前缀
@@ -13,6 +14,8 @@ async function bootstrap() {
   app.useGlobalFilters(new HttpExceptionFilter());
   // 拦截响应成功返回
   app.useGlobalInterceptors(new TransformInterceptor());
-  await app.listen(3000);
+  // 允许跨域
+  app.enableCors();
+  await app.listen(8085);
 }
 bootstrap();

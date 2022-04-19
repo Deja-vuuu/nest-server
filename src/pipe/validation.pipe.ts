@@ -1,9 +1,4 @@
-import {
-  ArgumentMetadata,
-  BadRequestException,
-  Injectable,
-  PipeTransform,
-} from '@nestjs/common';
+import { ArgumentMetadata, BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
 import { validate } from 'class-validator';
 import { plainToClass } from 'class-transformer';
 
@@ -19,7 +14,7 @@ export class ValidationPipe implements PipeTransform {
     const errors = await validate(object);
     if (errors.length > 0) {
       const msg = Object.values(errors[0].constraints)[0]; // 只需要取第一个错误信息并返回即可
-      throw new BadRequestException(`Validation failed: ${msg}`);
+      throw new BadRequestException(`${msg}`);
     }
     return value;
   }
